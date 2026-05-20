@@ -1,0 +1,262 @@
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+@import '@fontsource/dm-sans/400.css';
+@import '@fontsource/dm-sans/500.css';
+@import '@fontsource/dm-sans/700.css';
+@import '@fontsource/outfit/400.css';
+@import '@fontsource/outfit/500.css';
+@import '@fontsource/outfit/700.css';
+@import '@fontsource/sora/400.css';
+@import '@fontsource/sora/600.css';
+@import '@fontsource/jetbrains-mono/400.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Floating Widget ───────────────────────────────────────────── */
+.widget-drag {
+  -webkit-app-region: drag;
+}
+.widget-no-drag {
+  -webkit-app-region: no-drag;
+}
+
+@layer base {
+  :root {
+    /* ─── Default: Wealth theme (dark) ──────────────────────────────── */
+    --background: 222 47% 7%;
+    --foreground: 210 40% 95%;
+    --card: 222 47% 10%;
+    --card-foreground: 210 40% 95%;
+    --popover: 222 47% 10%;
+    --popover-foreground: 210 40% 95%;
+    --primary: 142 71% 45%;
+    --primary-foreground: 144 100% 5%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 95%;
+    --muted: 217 33% 14%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 43 74% 47%;
+    --accent-foreground: 43 100% 5%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 217 33% 20%;
+    --input: 217 33% 20%;
+    --ring: 142 71% 45%;
+    --radius: 2px;
+
+    /* Chart colors */
+    --chart-1: 142 71% 45%;
+    --chart-2: 43 74% 47%;
+    --chart-3: 200 80% 55%;
+    --chart-4: 280 70% 65%;
+    --chart-5: 350 80% 60%;
+
+    /* Sidebar */
+    --sidebar-background: 222 47% 8%;
+    --sidebar-foreground: 210 40% 85%;
+    --sidebar-primary: 142 71% 45%;
+    --sidebar-primary-foreground: 144 100% 5%;
+    --sidebar-accent: 217 33% 15%;
+    --sidebar-accent-foreground: 210 40% 95%;
+    --sidebar-border: 217 33% 18%;
+    --sidebar-ring: 142 71% 45%;
+
+    /* Layout */
+    --spacing-unit: 1rem;
+    --font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  /* Light mode override */
+  :root.light,
+  .light {
+    --background: 0 0% 98%;
+    --foreground: 222 47% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 10%;
+    --primary: 142 71% 40%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 94%;
+    --secondary-foreground: 222 47% 10%;
+    --muted: 210 40% 94%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 43 74% 47%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 55%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 214 32% 88%;
+    --input: 214 32% 88%;
+    --ring: 142 71% 40%;
+    --sidebar-background: 210 40% 96%;
+    --sidebar-foreground: 222 47% 20%;
+    --sidebar-primary: 142 71% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 40% 90%;
+    --sidebar-accent-foreground: 222 47% 10%;
+    --sidebar-border: 214 32% 85%;
+  }
+
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+
+  html {
+    font-size: var(--base-font-size, 16px);
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-family), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow: hidden;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground));
+  }
+}
+
+/* ─── Card Styles ─────────────────────────────────────────────────────────── */
+[data-card-style="elevated"] .wealth-card {
+  @apply shadow-xl border-transparent;
+}
+[data-card-style="glass"] .wealth-card {
+  background: hsl(var(--card) / 0.6) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  @apply border border-white/10;
+}
+[data-card-style="flat"] .wealth-card {
+  @apply shadow-none border-transparent;
+  background: hsl(var(--muted) / 0.5) !important;
+}
+
+/* ─── Sidebar Styles ──────────────────────────────────────────────────────── */
+[data-sidebar-style="floating"] #app-sidebar {
+  @apply m-3 rounded-2xl border border-border/60;
+  height: calc(100vh - 1.5rem);
+  background: hsl(var(--sidebar-background) / 0.85);
+  backdrop-filter: blur(20px);
+}
+[data-sidebar-style="flush"] #app-sidebar {
+  @apply rounded-none border-r border-border;
+  background: hsl(var(--sidebar-background));
+}
+[data-sidebar-style="mini"] #app-sidebar {
+  @apply w-16 overflow-hidden;
+}
+[data-sidebar-style="mini"] #app-sidebar .sidebar-label {
+  @apply hidden;
+}
+[data-sidebar-style="mini"] #app-sidebar:hover {
+  @apply w-64;
+}
+[data-sidebar-style="mini"] #app-sidebar:hover .sidebar-label {
+  @apply block;
+}
+
+/* ─── Chart Palettes ──────────────────────────────────────────────────────── */
+[data-chart-palette="pastel"] {
+  --chart-1: 200 80% 75%;
+  --chart-2: 140 60% 70%;
+  --chart-3: 280 60% 75%;
+  --chart-4: 40 80% 75%;
+  --chart-5: 350 70% 75%;
+}
+[data-chart-palette="monochrome"] {
+  --chart-1: 142 71% 45%;
+  --chart-2: 142 71% 35%;
+  --chart-3: 142 71% 60%;
+  --chart-4: 142 40% 30%;
+  --chart-5: 142 50% 70%;
+}
+[data-chart-palette="neon"] {
+  --chart-1: 120 100% 50%;
+  --chart-2: 180 100% 50%;
+  --chart-3: 270 100% 65%;
+  --chart-4: 330 100% 55%;
+  --chart-5: 60 100% 55%;
+}
+[data-chart-palette="earth"] {
+  --chart-1: 28 60% 45%;
+  --chart-2: 88 45% 40%;
+  --chart-3: 45 55% 55%;
+  --chart-4: 15 50% 35%;
+  --chart-5: 120 30% 35%;
+}
+[data-chart-palette="ocean"] {
+  --chart-1: 200 80% 50%;
+  --chart-2: 175 80% 45%;
+  --chart-3: 220 70% 60%;
+  --chart-4: 185 90% 40%;
+  --chart-5: 240 60% 65%;
+}
+
+/* ─── Density ─────────────────────────────────────────────────────────────── */
+[data-density="compact"] {
+  --spacing-unit: 0.75rem;
+}
+[data-density="comfortable"] {
+  --spacing-unit: 1rem;
+}
+[data-density="spacious"] {
+  --spacing-unit: 1.25rem;
+}
+
+/* ─── Animations ─────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+[data-motion="false"] *, [data-motion="false"] *::before, [data-motion="false"] *::after {
+  animation-duration: 0.01ms !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* ─── Titlebar drag region ────────────────────────────────────────────────── */
+.titlebar-drag {
+  -webkit-app-region: drag;
+}
+.titlebar-no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* ─── Gradient backgrounds ───────────────────────────────────────────────── */
+.gradient-wealth {
+  background: linear-gradient(135deg, hsl(var(--primary) / 0.15), hsl(var(--accent) / 0.1));
+}
+.gradient-card {
+  background: linear-gradient(180deg, hsl(var(--card)) 0%, hsl(var(--card) / 0.9) 100%);
+}
+
+/* ─── Number animation ───────────────────────────────────────────────────── */
+.counter-animate {
+  display: inline-block;
+  animation: countUp 0.6s ease-out forwards;
+}
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

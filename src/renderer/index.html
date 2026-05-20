@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WealthOS</title>
+    <script>
+      // Inject theme CSS variables before React mounts to prevent FOUC
+      ;(function () {
+        try {
+          const theme = window.__wealthosTheme__
+          if (theme) {
+            const root = document.documentElement
+            if (theme.mode === 'dark') root.classList.add('dark')
+            if (theme.primary) root.style.setProperty('--primary', theme.primary)
+            if (theme.secondary) root.style.setProperty('--secondary', theme.secondary)
+            if (theme.accent) root.style.setProperty('--accent', theme.accent)
+            if (theme.background) root.style.setProperty('--background', theme.background)
+            if (theme.card) root.style.setProperty('--card', theme.card)
+            if (theme.muted) root.style.setProperty('--muted', theme.muted)
+            if (theme.border) root.style.setProperty('--border', theme.border)
+            if (theme.radius) root.style.setProperty('--radius', theme.radius)
+            if (theme.font) root.style.setProperty('--font-family', theme.font)
+            if (theme.fontSize) root.style.setProperty('font-size', theme.fontSize)
+            if (theme.chartPalette) root.setAttribute('data-chart-palette', theme.chartPalette)
+            if (theme.cardStyle) root.setAttribute('data-card-style', theme.cardStyle)
+            if (theme.sidebarStyle) root.setAttribute('data-sidebar-style', theme.sidebarStyle)
+            if (theme.density) root.setAttribute('data-density', theme.density)
+            const densityMap = { compact: '0.75rem', comfortable: '1rem', spacious: '1.25rem' }
+            root.style.setProperty('--spacing-unit', densityMap[theme.density] || '1rem')
+          }
+        } catch (e) {
+          console.warn('Theme injection failed:', e)
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
