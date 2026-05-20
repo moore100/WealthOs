@@ -479,7 +479,6 @@ export function setupIpcHandlers(ipcMain: IpcMain, store: any, themeStore: any):
     }, {} as Record<string, any>)
   })
   ipcMain.handle('settings:save', (_e, obj: Record<string, unknown>) => {
-    console.log('[Settings Save] Saving:', obj)
     const db = getDb()
     const insert = db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)')
     for (const [key, value] of Object.entries(obj)) {
@@ -1944,7 +1943,6 @@ Design a cohesive, visually stunning theme. Be creative but ensure all colors wo
 
   // ─── Generic AI Completion (structured messages array) ──────────────
   ipcMain.handle('ai:complete', async (_e, opts: { messages: any[]; maxTokens?: number; jsonResponse?: boolean }) => {
-    console.log('[IPC ai:complete] Request received, maxTokens:', opts.maxTokens, 'jsonResponse:', opts.jsonResponse)
     try {
       if (!isLLMConfigured()) throw new Error('No LLM provider configured')
       const text = await chatComplete({

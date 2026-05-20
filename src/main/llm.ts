@@ -37,13 +37,11 @@ export function getLLMSettings(): LLMSettings {
     ollamaUrl: (get('ollama_url') || 'http://localhost:11434').replace(/\/+$/, ''),
     ollamaModel: get('ollama_model') || 'llama3.2',
   }
-  console.log('[LLM Settings]', settings)
   return settings
 }
 
 export async function chatComplete(opts: ChatOptions): Promise<string> {
   const cfg = getLLMSettings()
-  console.log(`[LLM] Provider: ${cfg.provider}, Ollama URL: ${cfg.ollamaUrl}, Model: ${cfg.ollamaModel}`)
   if (cfg.provider === 'ollama') return chatOllama(opts, cfg)
   return chatOpenAI(opts, cfg)
 }
@@ -63,7 +61,6 @@ async function chatOpenAI(opts: ChatOptions, cfg: LLMSettings): Promise<string> 
 
 async function chatOllama(opts: ChatOptions, cfg: LLMSettings): Promise<string> {
   const url = `${cfg.ollamaUrl}/api/chat`
-  console.log(`[LLM] Sending request to Ollama: ${url}, model: ${cfg.ollamaModel}`)
   const body: any = {
     model: cfg.ollamaModel,
     messages: opts.messages,
@@ -84,7 +81,6 @@ async function chatOllama(opts: ChatOptions, cfg: LLMSettings): Promise<string> 
       signal: controller.signal,
     })
     clearTimeout(timeout)
-    console.log(`[LLM] Ollama response status: ${res.status}`)
     if (!res.ok) {
       const text = await res.text().catch(() => '')
       throw new Error(`Ollama error ${res.status}: ${text || res.statusText}`)

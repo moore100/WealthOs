@@ -18,7 +18,8 @@
     "build:win": "electron-vite build && electron-builder --win --publish always",
     "build:mac": "electron-vite build && electron-builder --mac --publish always",
     "build:linux": "electron-vite build && electron-builder --linux --publish always",
-    "rebuild": "electron-rebuild -f -w better-sqlite3"
+    "rebuild": "electron-rebuild -f -w better-sqlite3",
+    "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
     "@fontsource/dm-sans": "^5.0.18",
