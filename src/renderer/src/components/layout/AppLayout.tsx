@@ -4,6 +4,7 @@ import { useAppStore } from '@/store/appStore'
 import Sidebar from './Sidebar'
 import Topbar from './Topbar'
 import GlobalAIButton from '@/components/GlobalAIButton'
+import ErrorBoundary from '@/components/ErrorBoundary'
 import { TooltipProvider } from '@/components/ui/tooltip'
 
 export default function AppLayout() {
@@ -27,7 +28,9 @@ export default function AppLayout() {
         <div className="flex flex-1 flex-col overflow-hidden rounded-2xl border border-border/50 bg-card shadow-xl">
           <Topbar />
           <main className="flex-1 overflow-y-auto p-6 bg-background/40">
-            <Outlet />
+            <ErrorBoundary resetKey={location.pathname}>
+              <Outlet />
+            </ErrorBoundary>
           </main>
           <GlobalAIButton />
         </div>
