@@ -6,6 +6,7 @@ import { tmpdir } from 'os'
 import { initDatabase, getDb } from '../db/database'
 import OpenAI from 'openai'
 import { chatComplete, isLLMConfigured, listOllamaModels, testOllama, getLLMSettings } from './llm'
+import { validateAgentAction } from './agent-schema'
 
 function hashPassword(password: string, salt: string): string {
   return createHash('sha256').update(salt + password).digest('hex')
@@ -949,10 +950,15 @@ Be proactive — suggest goals, budget tweaks, subscription cancellations the us
   })
 
   // ─── AI Agent Action Executor ──────────────────────────────────────────
-  ipcMain.handle('agent:execute', (_e, action: any) => {
+  ipcMain.handle('agent:execute', (_e, rawAction: unknown) => {
+    const validation = validateAgentAction(rawAction)
+    if (!validation.ok) {
+      return { ok: false, summary: validation.error }
+    }
+    const action: any = validation.action
     const db = getDb()
     try {
-      const t = action?.type
+      const t = action.type
       const today = new Date().toISOString().slice(0, 10)
       switch (t) {
         case 'add_expense': {
