@@ -36,8 +36,9 @@ export default function AIInsightsPage() {
   useEffect(() => {
     const init = async () => {
       try {
-        const settings = await window.api?.settings?.get()
-        setHasKey(!!settings?.openai_key)
+        const settings = await window.api?.settings?.get() as any
+        const provider = settings?.llm_provider || 'openai'
+        setHasKey(provider === 'ollama' ? true : !!settings?.openai_key)
         if (settings?.last_insights_date) setLastGenerated(settings.last_insights_date)
       } catch { /* ignore */ }
       load()
@@ -46,7 +47,7 @@ export default function AIInsightsPage() {
   }, [])
 
   const handleGenerate = async () => {
-    if (!hasKey) { toast.error('Add your OpenAI API key in Settings → OpenAI Key'); return }
+    if (!hasKey) { toast.error('Configure your AI provider in Settings → AI Provider'); return }
     setGenerating(true)
     try {
       const data = await window.api?.ai?.generateInsights()
@@ -84,7 +85,7 @@ export default function AIInsightsPage() {
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-4 w-4 text-yellow-500" />
-              <p className="text-sm">Add your OpenAI API key in <strong>Settings → OpenAI Key</strong> to generate AI insights.</p>
+              <p className="text-sm">Configure your AI provider in <strong>Settings → AI Provider</strong> to generate AI insights.</p>
             </div>
           </CardContent>
         </Card>

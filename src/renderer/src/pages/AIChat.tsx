@@ -1161,7 +1161,7 @@ export default function AIChatPage() {
     if (!hasKey) {
       const errorMsg = llmProvider === 'ollama'
         ? 'Please configure Ollama in Settings → AI Provider'
-        : 'Please add your OpenAI API key in Settings → OpenAI Key'
+        : 'Please add your OpenAI API key in Settings → AI Provider'
       toast.error(errorMsg)
       return
     }

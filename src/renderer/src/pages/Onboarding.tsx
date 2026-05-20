@@ -268,7 +268,7 @@ export default function OnboardingWizard() {
                     <div>
                       <h2 className="text-lg font-semibold">AI Financial Advisor</h2>
                       <p className="text-sm text-muted-foreground">
-                        WealthOS has a built-in AI advisor powered by GPT-4o. You can set your OpenAI API key in Settings → OpenAI Key.
+                        WealthOS has a built-in AI advisor. Choose between OpenAI (cloud) or Ollama (local & private) in Settings → AI Provider.
                       </p>
                     </div>
                     <div className="rounded-lg border border-primary/30 bg-primary/5 p-4">

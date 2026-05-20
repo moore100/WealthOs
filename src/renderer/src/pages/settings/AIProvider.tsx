@@ -108,12 +108,10 @@ export default function AIProviderPage() {
         ollama_model: ollamaModel,
       }
       if (openaiKey.trim() !== savedOpenaiKey) payload.openai_key = openaiKey.trim()
-      console.log('[AIProvider] Saving payload:', payload)
       if (!window.api?.settings?.save) {
         throw new Error('Settings save API is not available. Please restart the app.')
       }
-      const result = await window.api.settings.save(payload)
-      console.log('[AIProvider] Save result:', result)
+      await window.api.settings.save(payload)
       setSavedOpenaiKey(openaiKey.trim())
       toast.success(`Saved. Using ${provider === 'openai' ? 'OpenAI' : 'Ollama (local)'}`)
     } catch (e: any) {
