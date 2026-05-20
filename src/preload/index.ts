@@ -414,6 +414,45 @@ const api = {
     getEngineStatus: () => ipcRenderer.invoke('trading:getEngineStatus'),
   },
 
+  // Business Management Module
+  businesses: {
+    list: () => ipcRenderer.invoke('businesses:list'),
+    get: (id: number) => ipcRenderer.invoke('businesses:get', id),
+    create: (data: any) => ipcRenderer.invoke('businesses:create', data),
+    update: (id: number, data: any) => ipcRenderer.invoke('businesses:update', id, data),
+    delete: (id: number) => ipcRenderer.invoke('businesses:delete', id),
+    getLogo: (id: number) => ipcRenderer.invoke('businesses:getLogo', id),
+    kb: {
+      list: (businessId: number) => ipcRenderer.invoke('businesses:kb:list', businessId),
+      add: (businessId: number, data: any) => ipcRenderer.invoke('businesses:kb:add', businessId, data),
+      update: (id: number, data: any) => ipcRenderer.invoke('businesses:kb:update', id, data),
+      delete: (id: number) => ipcRenderer.invoke('businesses:kb:delete', id),
+    },
+    metrics: {
+      list: (businessId: number, metricType?: string) => ipcRenderer.invoke('businesses:metrics:list', businessId, metricType),
+      add: (businessId: number, data: any) => ipcRenderer.invoke('businesses:metrics:add', businessId, data),
+      delete: (id: number) => ipcRenderer.invoke('businesses:metrics:delete', id),
+    },
+    agents: {
+      list: (businessId: number) => ipcRenderer.invoke('businesses:agents:list', businessId),
+      create: (businessId: number, data: any) => ipcRenderer.invoke('businesses:agents:create', businessId, data),
+      delete: (id: number) => ipcRenderer.invoke('businesses:agents:delete', id),
+      tasks: (businessId: number) => ipcRenderer.invoke('businesses:agents:tasks', businessId),
+    },
+    assets: {
+      list: (businessId: number, type?: string) => ipcRenderer.invoke('businesses:assets:list', businessId, type),
+      save: (businessId: number, data: any) => ipcRenderer.invoke('businesses:assets:save', businessId, data),
+      delete: (id: number) => ipcRenderer.invoke('businesses:assets:delete', id),
+    },
+    social: {
+      list: (businessId: number) => ipcRenderer.invoke('businesses:social:list', businessId),
+    },
+    posts: {
+      list: (businessId: number, status?: string) => ipcRenderer.invoke('businesses:posts:list', businessId, status),
+      create: (businessId: number, data: any) => ipcRenderer.invoke('businesses:posts:create', businessId, data),
+    },
+  },
+
   // Navigation events from main
   onNavigate: (callback: (path: string) => void) => {
     ipcRenderer.on('navigate', (_e, path) => callback(path))

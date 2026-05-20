@@ -85,6 +85,12 @@ export const navSections: NavSection[] = [
     ],
   },
   {
+    label: 'Businesses',
+    items: [
+      { label: 'My Businesses', icon: Box as IconComponent, path: '/businesses' },
+    ],
+  },
+  {
     label: 'Wellness',
     items: [
       { label: 'Financial Mood', icon: Heart as IconComponent, path: '/mood' },
@@ -153,6 +159,8 @@ export const DEFAULT_VISIBLE_PATHS: string[] = [
   '/payment-channels',
   '/budget',
   '/investments',
+  // Businesses
+  '/businesses',
   // AI
   '/ai-chat',
   '/isp',

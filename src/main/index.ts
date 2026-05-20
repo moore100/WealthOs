@@ -10,6 +10,7 @@ import { setupNetworkHandlers } from './network'
 import { setupPaymentChannelHandlers } from './payment-channels'
 import { setupSavingsIntentionHandlers } from './savings-intentions'
 import { setupTradingHandlers } from './trading-handlers'
+import { setupBusinessHandlers } from './business-handlers'
 
 // Fix OpenAI SDK "Connection error" in Electron on Windows by forcing IPv4 DNS first
 try { dns.setDefaultResultOrder('ipv4first') } catch { /* older node */ }
@@ -76,6 +77,7 @@ function createWindow(): void {
   setupSavingsIntentionHandlers()
   setupNotifications(mainWindow)
   setupTradingHandlers()
+  setupBusinessHandlers(ipcMain)
 }
 
 app.whenReady().then(async () => {

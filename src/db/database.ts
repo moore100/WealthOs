@@ -491,6 +491,165 @@ function createTables(db: Database.Database): void {
     db.prepare('ALTER TABLE expenses ADD COLUMN mood_at_purchase TEXT').run()
   }
 
+  // Migration: Business Management Module (Phase 0 — all tables upfront)
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS businesses (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      name TEXT NOT NULL,
+      slug TEXT NOT NULL UNIQUE,
+      logo_path TEXT,
+      description TEXT,
+      industry TEXT,
+      website TEXT,
+      founded_date TEXT,
+      currency TEXT NOT NULL DEFAULT 'USD',
+      brand_color TEXT DEFAULT '#3b82f6',
+      mission TEXT,
+      target_audience TEXT,
+      is_active INTEGER NOT NULL DEFAULT 1,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS business_knowledge (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      business_id INTEGER NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
+      type TEXT NOT NULL DEFAULT 'note',
+      title TEXT,
+      content TEXT NOT NULL DEFAULT '',
+      tags TEXT,
+      pinned INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS business_metrics (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      business_id INTEGER NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
+      metric_type TEXT NOT NULL,
+      value REAL NOT NULL DEFAULT 0,
+      unit TEXT DEFAULT '',
+      period_start TEXT NOT NULL,
+      period_end TEXT,
+      source TEXT,
+      notes TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS business_assets (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      business_id INTEGER NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
+      type TEXT NOT NULL DEFAULT 'social_post',
+      name TEXT NOT NULL,
+      canvas_json TEXT,
+      thumbnail_path TEXT,
+      export_path TEXT,
+      width INTEGER,
+      height INTEGER,
+      generated_by_agent_id INTEGER,
+      tags TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS agents (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      business_id INTEGER NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
+      parent_agent_id INTEGER REFERENCES agents(id) ON DELETE SET NULL,
+      role TEXT NOT NULL DEFAULT 'custom',
+      name TEXT NOT NULL,
+      avatar TEXT DEFAULT '🤖',
+      system_prompt TEXT NOT NULL,
+      model TEXT,
+      tools_json TEXT NOT NULL DEFAULT '[]',
+      is_active INTEGER NOT NULL DEFAULT 1,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS agent_tasks (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      business_id INTEGER NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
+      agent_id INTEGER REFERENCES agents(id) ON DELETE SET NULL,
+      parent_task_id INTEGER REFERENCES agent_tasks(id) ON DELETE CASCADE,
+      title TEXT NOT NULL,
+      description TEXT,
+      status TEXT NOT NULL DEFAULT 'queued',
+      priority INTEGER NOT NULL DEFAULT 3,
+      input_json TEXT,
+      output_json TEXT,
+      error TEXT,
+      started_at TEXT,
+      completed_at TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS agent_messages (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      task_id INTEGER NOT NULL REFERENCES agent_tasks(id) ON DELETE CASCADE,
+      agent_id INTEGER REFERENCES agents(id) ON DELETE SET NULL,
+      role TEXT NOT NULL,
+      content TEXT,
+      tool_calls_json TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS social_accounts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      business_id INTEGER NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
+      platform TEXT NOT NULL,
+      account_handle TEXT,
+      account_id_remote TEXT,
+      access_token_encrypted TEXT,
+      refresh_token_encrypted TEXT,
+      expires_at TEXT,
+      scopes TEXT,
+      connected_at TEXT NOT NULL DEFAULT (datetime('now')),
+      is_active INTEGER NOT NULL DEFAULT 1
+    );
+
+    CREATE TABLE IF NOT EXISTS social_posts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      business_id INTEGER NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
+      asset_id INTEGER REFERENCES business_assets(id) ON DELETE SET NULL,
+      platform TEXT NOT NULL,
+      account_id INTEGER REFERENCES social_accounts(id) ON DELETE SET NULL,
+      content_text TEXT,
+      hashtags TEXT,
+      scheduled_at TEXT,
+      posted_at TEXT,
+      status TEXT NOT NULL DEFAULT 'draft',
+      remote_post_id TEXT,
+      engagement_json TEXT,
+      agent_id INTEGER REFERENCES agents(id) ON DELETE SET NULL,
+      error TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS posting_strategies (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      business_id INTEGER NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
+      platform TEXT NOT NULL,
+      frequency_per_week INTEGER NOT NULL DEFAULT 3,
+      best_times_json TEXT,
+      content_themes TEXT,
+      ai_managed INTEGER NOT NULL DEFAULT 0,
+      auto_post INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_business_knowledge_business ON business_knowledge(business_id);
+    CREATE INDEX IF NOT EXISTS idx_business_metrics_business ON business_metrics(business_id);
+    CREATE INDEX IF NOT EXISTS idx_business_assets_business ON business_assets(business_id);
+    CREATE INDEX IF NOT EXISTS idx_agents_business ON agents(business_id);
+    CREATE INDEX IF NOT EXISTS idx_agent_tasks_business ON agent_tasks(business_id);
+    CREATE INDEX IF NOT EXISTS idx_agent_tasks_parent ON agent_tasks(parent_task_id);
+    CREATE INDEX IF NOT EXISTS idx_agent_messages_task ON agent_messages(task_id);
+    CREATE INDEX IF NOT EXISTS idx_social_posts_business ON social_posts(business_id);
+    CREATE INDEX IF NOT EXISTS idx_social_posts_scheduled ON social_posts(scheduled_at, status);
+  `)
+
   // Migration: drop old knowledge_base with multi-column schema and recreate
   const kbExists = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='knowledge_base'").get() as any
   if (kbExists) {

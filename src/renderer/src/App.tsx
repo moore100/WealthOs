@@ -75,6 +75,9 @@ const PaymentChannelsPage = lazy(() => import('./pages/PaymentChannels'))
 const SavingsGoalDetailPage = lazy(() => import('./pages/SavingsGoalDetail'))
 const SavingsIntentionsPage = lazy(() => import('./pages/SavingsIntentions'))
 const TradingPage = lazy(() => import('./pages/Trading'))
+const BusinessesPage = lazy(() => import('./pages/Businesses'))
+const BusinessNewPage = lazy(() => import('./pages/BusinessNew'))
+const BusinessDashboardPage = lazy(() => import('./pages/BusinessDashboard'))
 
 function PageFallback() {
   return (
@@ -213,6 +216,9 @@ export default function App() {
             <Route path="payment-channels" element={<PaymentChannelsPage />} />
             <Route path="savings-intentions" element={<SavingsIntentionsPage />} />
             <Route path="trading" element={<TradingPage />} />
+            <Route path="businesses" element={<BusinessesPage />} />
+            <Route path="businesses/new" element={<BusinessNewPage />} />
+            <Route path="businesses/:id" element={<BusinessDashboardPage />} />
           </Route>
         </Routes>
       </Suspense>
